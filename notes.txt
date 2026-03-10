@@ -1,0 +1,32 @@
+etape 1  analyse univariée: 
+-visualisation ->> distribution complete
+-statistiques ->> resumé de cette distribution
+
+deux  variables (nature):
+
+quantitatives // qualitative (encodage)
+
+moyenne , median, ecart-type ,variance,min-max,ecart-intercar // mode,
+histogramme // diagramme a bares
+
+
+
+
+etape 2 analyse bivariée(relation entre les variables quantitatives et qualitative):
+-visualisation ->> distribution complete
+-statistiques ->> resumé de cette distribution
+
+quantitatives - quantitatives  :
+ -nuages de points
+ - stat : correlation pearson [-1,+1], (kendal ,spearman) ->correlation de rang, test de significativité
+
+qualitative - qualitative :
+ -diagramme de bares,table de contingence
+ - stat : mesures ou coeff d'association, k^2
+
+qualitative - quantitatives :
+ -boite a moustache,violon
+ - stat : mesures ou coeff d'association, k^2
+
+
+etape 3 : nettoyage / donnees manquantes ->> -svm , naive bayes
