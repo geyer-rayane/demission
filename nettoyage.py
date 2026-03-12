@@ -103,5 +103,8 @@ if len(invalid_dates) > 0:
 
 
 # 9. Sauvegarder dataset propre
-table1.to_csv("table1_clean.csv", index=False)
-table2.to_csv("table2_clean.csv", index=False)
+import os
+os.makedirs("data", exist_ok=True)
+table1.to_csv("data/table1_clean.csv", index=False)
+table2.to_csv("data/table2_clean.csv", index=False)
+print("[OK] Fichiers nettoyés sauvegardés dans data/")

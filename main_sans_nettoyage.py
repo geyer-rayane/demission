@@ -1,119 +1,153 @@
 """
-Main - Orchestrer toutes les analyses statistiques du projet BI
+Pipeline d'analyse avant nettoyage — données brutes
+1. Analyse univariée des tables brutes
+2. Analyse bivariée des tables brutes
 """
 
-import pandas as pd
 import os
-import subprocess
-from lib_analyse import analyse_univariee, analyse_table, detect_type, get_var_types
+import pandas as pd
+from lib_analyse import analyse_univariee, analyse_table, get_var_types
 
-# VÉRIFICATION DES CHEMINS
+# ── Chemins ────────────────────────────────────────────────────────────────────
 
-print("Vérification des chemins...")
-assert os.path.exists("data/table1.csv"), "✗ data/table1.csv manquant"
-assert os.path.exists("data/table2.csv"), "✗ data/table2.csv manquant"
-assert os.path.exists("nettoyage.py"), "✗ nettoyage.py manquant"
-assert os.path.exists("lib_analyse.py"), "✗ lib_analyse.py manquant"
-print("✓ Tous les fichiers requis trouvés\n")
+DATA_DIR    = "data"
+OUTPUT_ROOT = "analyse_avant_nettoyage"
 
-# CHARGEMENT
+UNI_TABLE1  = os.path.join(OUTPUT_ROOT, "analyse_univariee", "table1")
+UNI_TABLE2  = os.path.join(OUTPUT_ROOT, "analyse_univariee", "table2")
+BIV_TABLE1  = os.path.join(OUTPUT_ROOT, "analyse_bivariee",  "table1")
+BIV_TABLE2  = os.path.join(OUTPUT_ROOT, "analyse_bivariee",  "table2")
+INTERESTING = os.path.join(OUTPUT_ROOT, "analyse_bivariee",  "graphiques_interessants.txt")
 
-print("Chargement des données (non nettoyées)..")
-table1 = pd.read_csv("data/table1.csv")
-table2 = pd.read_csv("data/table2.csv")
-print(f"✓ Table1: {table1.shape}")
-print(f"✓ Table2: {table2.shape}\n")
+# ── Vérifications préliminaires ────────────────────────────────────────────────
 
-# CONFIGURATION DES VARIABLES
+print("Vérification des fichiers requis...")
+assert os.path.exists(os.path.join(DATA_DIR, "table1.csv")), \
+    "[ERREUR] data/table1.csv introuvable"
+assert os.path.exists(os.path.join(DATA_DIR, "table2.csv")), \
+    "[ERREUR] data/table2.csv introuvable"
+assert os.path.exists("lib_analyse.py"), "[ERREUR] lib_analyse.py introuvable"
+print("[OK] Tous les fichiers requis trouvés\n")
 
-quant_table1, qual_table1 = get_var_types(table1)
-quant_table2, qual_table2 = get_var_types(table2)
+# ── Chargement ────────────────────────────────────────────────────────────────
+
+print("Chargement des données brutes...")
+table1 = pd.read_csv(os.path.join(DATA_DIR, "table1.csv"))
+table2 = pd.read_csv(os.path.join(DATA_DIR, "table2.csv"))
+print(f"[OK] table1 : {table1.shape[0]:,} lignes × {table1.shape[1]} colonnes")
+print(f"[OK] table2 : {table2.shape[0]:,} lignes × {table2.shape[1]} colonnes\n")
+
+# ── Détection des types de variables ──────────────────────────────────────────
+
+quant_t1, qual_t1 = get_var_types(table1)
+quant_t2, qual_t2 = get_var_types(table2)
 
 print("=" * 70)
 print("VARIABLES DÉTECTÉES")
 print("=" * 70)
-print(f"\nTable1:")
-print(f"  Quantitatives ({len(quant_table1)}): {quant_table1}")
-print(f"  Qualitatives ({len(qual_table1)}): {qual_table1}")
-print(f"\nTable2:")
-print(f"  Quantitatives ({len(quant_table2)}): {quant_table2}")
-print(f"  Qualitatives ({len(qual_table2)}): {qual_table2}")
+print(f"\nTable1  —  quantitatives ({len(quant_t1)}) : {quant_t1}")
+print(f"         qualitatives  ({len(qual_t1)}) : {qual_t1}")
+print(f"\nTable2  —  quantitatives ({len(quant_t2)}) : {quant_t2}")
+print(f"         qualitatives  ({len(qual_t2)}) : {qual_t2}")
 
-# Fonction pour proposer retrait de variables
-def remove_variables(quant, qual, table_name):
-    all_vars = {"quant": quant.copy(), "qual": qual.copy()}
-    
-    print(f"\n{table_name} - Retirer des variables? (y/n): ", end="")
-    if input().lower() != "y":
-        return all_vars["quant"], all_vars["qual"]
-    
+
+def _remove_variables(quant: list, qual: list, label: str) -> tuple[list, list]:
+    """Propose interactivement de retirer des variables avant analyse."""
+    print(f"\n{label} — Retirer des variables ? (o/n) : ", end="")
+    if input().strip().lower() not in ("o", "oui", "y", "yes"):
+        return quant, qual
+    q, ql = quant.copy(), qual.copy()
     while True:
-        print(f"\nVariables actuelles:")
-        print(f"  Quantitatives: {all_vars['quant']}")
-        print(f"  Qualitatives: {all_vars['qual']}")
-        print(f"\nEntrez le nom de la variable à retirer (ou 'done' pour continuer): ", end="")
+        print(f"  Quantitatives : {q}")
+        print(f"  Qualitatives  : {ql}")
+        print("  Variable à retirer (ou 'fin') : ", end="")
         var = input().strip()
-        
-        if var.lower() == "done":
+        if var.lower() in ("fin", "done", "stop", ""):
             break
-        
-        if var in all_vars["quant"]:
-            all_vars["quant"].remove(var)
-            print(f"✓ {var} retiré des quantitatives")
-        elif var in all_vars["qual"]:
-            all_vars["qual"].remove(var)
-            print(f"✓ {var} retiré des qualitatives")
+        if var in q:
+            q.remove(var); print(f"  [OK] {var} retiré des quantitatives")
+        elif var in ql:
+            ql.remove(var); print(f"  [OK] {var} retiré des qualitatives")
         else:
-            print(f"✗ Variable {var} non trouvée")
-    
-    return all_vars["quant"], all_vars["qual"]
+            print(f"  [?] Variable '{var}' non trouvée")
+    return q, ql
+
 
 print("\n" + "=" * 70)
 print("CONFIGURATION DES VARIABLES")
 print("=" * 70)
 
-quant_table1, qual_table1 = remove_variables(quant_table1, qual_table1, "TABLE1")
-quant_table2, qual_table2 = remove_variables(quant_table2, qual_table2, "TABLE2")
+quant_t1, qual_t1 = _remove_variables(quant_t1, qual_t1, "TABLE1")
+quant_t2, qual_t2 = _remove_variables(quant_t2, qual_t2, "TABLE2")
 
-print(f"\n✓ Configuration finalisée:")
-print(f"  Table1 - Quant: {len(quant_table1)}, Qual: {len(qual_table1)}")
-print(f"  Table2 - Quant: {len(quant_table2)}, Qual: {len(qual_table2)}\n")
+# ID systématiquement exclu des graphiques
+for lst in (quant_t1, qual_t1, quant_t2, qual_t2):
+    if "ID" in lst:
+        lst.remove("ID")
 
+print(f"\n[OK] Table1 : {len(quant_t1)} quant., {len(qual_t1)} qual.")
+print(f"[OK] Table2 : {len(quant_t2)} quant., {len(qual_t2)} qual.\n")
 
+# ── Création des dossiers de sortie ───────────────────────────────────────────
 
-# CRÉATION DES DOSSIERS
+for path in (UNI_TABLE1, UNI_TABLE2, BIV_TABLE1, BIV_TABLE2):
+    os.makedirs(path, exist_ok=True)
 
-os.makedirs("analyse_avant_nettoyage/analyse_univariee/table1", exist_ok=True)
-os.makedirs("analyse_avant_nettoyage/analyse_univariee/table2", exist_ok=True)
-os.makedirs("analyse_avant_nettoyage/analyse_bivariee/table1", exist_ok=True)
-os.makedirs("analyse_avant_nettoyage/analyse_bivariee/table2", exist_ok=True)
+with open(INTERESTING, "w", encoding="utf-8") as f:
+    f.write("Graphiques bivariés à interpréter en priorité\n")
+    f.write("=" * 60 + "\n")
 
-# PHASE 1: ANALYSE UNIVARIÉE
+# ── Phase 1 : Analyse univariée ───────────────────────────────────────────────
 
 print("=" * 70)
-print("PHASE 1: ANALYSE UNIVARIÉE")
+print("PHASE 1 — ANALYSE UNIVARIÉE")
 print("=" * 70 + "\n")
 
-stats_table1 = analyse_univariee(table1, quant_table1, qual_table1, "analyse_avant_nettoyage/analyse_univariee/table1")
-print(f"Table1: {len(stats_table1)} variables analysées\n")
+stats_t1 = analyse_univariee(table1, quant_t1, qual_t1, UNI_TABLE1)
+print(f"[OK] Table1 : {len(stats_t1)} variables analysées\n")
 
-stats_table2 = analyse_univariee(table2, quant_table2, qual_table2, "analyse_avant_nettoyage/analyse_univariee/table2")
-print(f"Table2: {len(stats_table2)} variables analysées\n")
+stats_t2 = analyse_univariee(table2, quant_t2, qual_t2, UNI_TABLE2)
+print(f"[OK] Table2 : {len(stats_t2)} variables analysées\n")
 
-# PHASE 2: ANALYSE BIVARIÉE
+# ── Phase 2 : Analyse bivariée ────────────────────────────────────────────────
 
 print("=" * 70)
-print("PHASE 2: ANALYSE BIVARIÉE")
+print("PHASE 2 — ANALYSE BIVARIÉE")
 print("=" * 70 + "\n")
 
-resultats_table1 = analyse_table(table1, "analyse_avant_nettoyage/analyse_bivariee/table1")
-resultats_table1.to_csv("analyse_avant_nettoyage/analyse_bivariee/resultats_table1.csv", index=False)
-print(f"Table1: {len(resultats_table1)} associations\n")
 
-resultats_table2 = analyse_table(table2, "analyse_avant_nettoyage/analyse_bivariee/table2")
-resultats_table2.to_csv("analyse_avant_nettoyage/analyse_bivariee/resultats_table2.csv", index=False)
-print(f"Table2: {len(resultats_table2)} associations\n")
+def _progress(current, total, v1, v2):
+    print(f"  [{current:>4}/{total}] {v1} vs {v2}")
+
+
+res_t1 = analyse_table(
+    table1, BIV_TABLE1,
+    progress_callback=_progress,
+    interesting_file=INTERESTING,
+    excluded_columns=["ID"],
+    generate_bivariate_plots_only_if_significant=True,
+    generate_quant_plots_only_if_correlated=True,
+)
+res_t1.to_csv(os.path.join(OUTPUT_ROOT, "analyse_bivariee",
+                            "resultats_table1.csv"), index=False)
+print(f"\n[OK] Table1 : {len(res_t1)} paires analysées\n")
+
+res_t2 = analyse_table(
+    table2, BIV_TABLE2,
+    progress_callback=_progress,
+    interesting_file=INTERESTING,
+    excluded_columns=["ID"],
+    generate_bivariate_plots_only_if_significant=True,
+    generate_quant_plots_only_if_correlated=True,
+)
+res_t2.to_csv(os.path.join(OUTPUT_ROOT, "analyse_bivariee",
+                            "resultats_table2.csv"), index=False)
+print(f"\n[OK] Table2 : {len(res_t2)} paires analysées\n")
+
+# ── Fin ────────────────────────────────────────────────────────────────────────
 
 print("=" * 70)
-print("✓ ANALYSES TERMINÉES")
+print("[OK] ANALYSES TERMINÉES")
+print(f"     Résultats dans : {OUTPUT_ROOT}/")
+print(f"     Priorités      : {INTERESTING}")
 print("=" * 70)

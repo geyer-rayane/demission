@@ -1,0 +1,27 @@
+Graphiques bivariés à interpréter en priorité
+============================================================
+
+=== Analyse de analyse_avant_nettoyage/analyse_bivariee/table1 ===
+[SIGNIFICATIF] CDSITFAM vs CDSEXE | Type=qual-quant | ANOVA p=0 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\CDSITFAM_CDSEXE.png
+[SIGNIFICATIF] CDMOTDEM vs CDSEXE | Type=qual-quant | ANOVA p=0.004713 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\CDMOTDEM_CDSEXE.png
+[SIGNIFICATIF] RANGAGEAD vs CDSEXE | Type=qual-quant | ANOVA p=3.613e-169 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\RANGAGEAD_CDSEXE.png
+[SIGNIFICATIF] RANGAGEDEM vs CDSEXE | Type=qual-quant | ANOVA p=4.071e-249 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\RANGAGEDEM_CDSEXE.png
+[SIGNIFICATIF] RANGDEM vs CDSEXE | Type=qual-quant | ANOVA p=0.01193 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\RANGDEM_CDSEXE.png
+[SIGNIFICATIF] RANGADH vs CDSEXE | Type=qual-quant | ANOVA p=1.928e-48 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\RANGADH_CDSEXE.png
+[SIGNIFICATIF] CDSITFAM vs MTREV | Type=qual-quant | ANOVA p=0.002412 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\CDSITFAM_MTREV.png
+[SIGNIFICATIF] DTDEM vs MTREV | Type=qual-quant | ANOVA p=0.001109 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\DTDEM_MTREV.png
+[SIGNIFICATIF] CDSITFAM vs NBENF | Type=qual-quant | ANOVA p=0 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\CDSITFAM_NBENF.png
+[SIGNIFICATIF] DTADH vs NBENF | Type=qual-quant | ANOVA p=5.866e-17 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\DTADH_NBENF.png
+[SIGNIFICATIF] DTDEM vs NBENF | Type=qual-quant | ANOVA p=2.311e-89 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\DTDEM_NBENF.png
+[SIGNIFICATIF] CDMOTDEM vs NBENF | Type=qual-quant | ANOVA p=3.259e-98 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\CDMOTDEM_NBENF.png
+[SIGNIFICATIF] RANGAGEAD vs NBENF | Type=qual-quant | ANOVA p=1.53e-48 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\RANGAGEAD_NBENF.png
+[SIGNIFICATIF] RANGAGEDEM vs NBENF | Type=qual-quant | ANOVA p=1.445e-291 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\RANGAGEDEM_NBENF.png
+[SIGNIFICATIF] RANGDEM vs NBENF | Type=qual-quant | ANOVA p=3.74e-158 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\RANGDEM_NBENF.png
+[SIGNIFICATIF] RANGADH vs NBENF | Type=qual-quant | ANOVA p=9.525e-78 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\RANGADH_NBENF.png
+[FORT] CDSITFAM vs DTADH | Type=qual-qual | CramersV=0.533 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\CramersV\CDSITFAM_DTADH.png
+[SIGNIFICATIF] CDSITFAM vs CDTMT | Type=qual-quant | ANOVA p=6.316e-38 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\CDSITFAM_CDTMT.png
+[SIGNIFICATIF] CDSITFAM vs ANNEEDEM | Type=qual-quant | ANOVA p=0 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\CDSITFAM_ANNEEDEM.png
+[SIGNIFICATIF] CDSITFAM vs CDCATCL | Type=qual-quant | ANOVA p=3.538e-24 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\CDSITFAM_CDCATCL.png
+[SIGNIFICATIF] CDSITFAM vs AGEAD | Type=qual-quant | ANOVA p=0 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\CDSITFAM_AGEAD.png
+[SIGNIFICATIF] CDSITFAM vs AGEDEM | Type=qual-quant | ANOVA p=0 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\CDSITFAM_AGEDEM.png
+[SIGNIFICATIF] CDSITFAM vs ADH | Type=qual-quant | ANOVA p=7.893e-231 | Graphique=analyse_avant_nettoyage/analyse_bivariee/table1\ANOVA\CDSITFAM_ADH.png
