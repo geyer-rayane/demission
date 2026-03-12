@@ -30,3 +30,22 @@ qualitative - quantitatives :
 
 
 etape 3 : nettoyage / donnees manquantes ->> -svm , naive bayes
+
+
+2. Le chiffre important : p = 0,0047
+
+Le test utilisé est une Analysis of Variance.
+
+La règle est simple :
+
+si p < 0,05 → il y a une vraie différence
+
+si p > 0,05 → pas de différence claire
+
+Ici :
+
+0,0047 < 0,05
+
+Donc :
+
+➡ le sexe n’est pas réparti pareil selon DV, DA et RA
